@@ -1,5 +1,5 @@
-import firebase from "firebase/app";
-import 'firebase/auth';
+import { initializeApp } from "firebase/app";
+import "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -11,9 +11,5 @@ const firebaseConfig = {
   appId: process.env.APP_ID
 };
 
-// Initialize Firebase
-if (!firebase.getApps.length) {
-    firebase.initializeApp(firebaseConfig);
-};
-
-export default firebase;
+//初期化
+export const app = initializeApp(firebaseConfig);
