@@ -3,10 +3,11 @@ import { useRouter } from 'next/router';
 
 //firebase
 import { app } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const RightComponent = () => {
   const [isCreateAccount, setIsCreateAccount] = useState<boolean>(false);
+  const [isLoginAccount, setIsLoginAccount] = useState<boolean>(false);
   const [allowCreate, setAllowCreate] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -40,6 +41,38 @@ const RightComponent = () => {
   const emailSignUp = (email: string, password: string) => {
     const auth = getAuth(app);
 
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log(user);
+
+      router.push({
+        pathname: "/share",
+        query: { user: user.uid }
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  };
+
+  //ログイン処理(メールアドレス)
+  const emailLogin = (email: string, password: string) => {
+    const auth = getAuth(app);
+
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log(user);
+
+      router.push({
+        pathname: "/share",
+        query: { user: user.uid }
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   };
 
   useEffect(() => {
@@ -66,6 +99,12 @@ const RightComponent = () => {
             onClick={() => setIsCreateAccount(true)}
             >
                 アカウントを作成
+            </button>
+            <button 
+            className='w-2/5 text-white bg-green-700 h-12 rounded-full mb-4 min-w-240 hover:bg-green-600 transition-all'
+            onClick={() => setIsLoginAccount(true)}
+            >
+                ログイン
             </button>
             <button 
             className='w-2/5 min-w-240'
@@ -112,6 +151,50 @@ const RightComponent = () => {
             onClick={() => emailSignUp(email, password)}
             >
               作成
+            </button>
+          </div>
+        </div>
+      </div>
+      ) : (
+        <></>
+      )
+    }
+    {
+      isLoginAccount ? (
+      <div>
+        <div 
+        className='absolute bg-stone-900 w-full h-full opacity-70 top-0 left-0 z-10'
+        onClick={() => setIsLoginAccount(false)}
+        >
+        </div>
+        <div className='absolute bg-gray-50 top-[38%] left-[40%] left-3/10 z-20 px-8 py-12 rounded-md text-gray-900 w-2/5'>
+          <h2 className='text-2xl font-bold mb-4'>
+            ログインする
+          </h2>
+          <div className='flex flex-wrap justify-end'>
+            <input 
+            type="email" 
+            placeholder='sample@gmail.com' 
+            className='w-full mb-4'
+            onChange={(e) => handleEmail(e)}
+            />
+            <input 
+            type="password" 
+            placeholder='パスワードを入力' 
+            className='w-full mb-1'
+            onChange={(e) => handlePassword(e)}
+            />
+            <span 
+            className='w-full mb-4 text-sm text-gray-500'
+            >
+              パスワードは8文字以上で英数字と記号を使用してください。
+            </span>
+            <button 
+            className='w-40 bg-blue-600 text-white h-12 rounded-full hover:bg-blue-500 transition-all disabled:bg-gray-300'
+            disabled={allowCreate ? false : true}
+            onClick={() => emailLogin(email, password)}
+            >
+              ログイン
             </button>
           </div>
         </div>

@@ -1,11 +1,14 @@
 import React from 'react';
+import { useAuth } from '@/context/auth';
 
 const Header = () => {
+    const { user } = useAuth();
+
     return (
         <header className='h-14 px-4 border-b fixed w-full top-0 z-10 bg-white'>
             <div className='h-full flex justify-between items-center w-full mx-auto'>
                 <div className='font-bold tracking-wide'>
-                    sns-sample
+                    M-S
                 </div>
                 <div className='text-sm font-bold flex items-center'>
                     <div className='flex items-center mr-4'>
@@ -21,7 +24,7 @@ const Header = () => {
                         </button>
                     </div>
                     <div className='text-sm font-bold flex items-center'>
-                        <span className='tracking-wide'>sample@gmail.com</span>
+                        <span className='tracking-wide'>{ user ? user.email : "" }</span>
                         <span className='bg-red-500 block w-10 h-10 rounded-full ml-4'></span>
                     </div>
                 </div>
