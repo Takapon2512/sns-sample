@@ -14,7 +14,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <>
-            <main id="main" className='min-h-screen opacity-0 flex w-4/5 max-w-[960px] m-auto bg-gray-100 mt-20'>
+            <main id="main" className='opacity-0 flex w-4/5 max-w-[960px] m-auto mt-20'>
                 { children }
             </main>
         </>
