@@ -15,6 +15,8 @@ const Sidebar = () => {
     //選択欄の状態を管理
     const [colors, setColors] = useState<killifishColorType[]>(killifishColors);
     const [characters, setCharacters] = useState<killifishCharacterType[]>(killifishCharacters);
+    const [drawerColors, setDrawerColors] = useState<boolean>(false);
+    const [drawerCharacters, setDrawerCharacters] = useState<boolean>(false);
 
     const handleColorsCheck = (colorData: killifishColorType) => {
         const indexValue = colors.indexOf(colorData);
@@ -57,7 +59,7 @@ const Sidebar = () => {
 
     return (
         <>
-        <ul className='w-[300px] text-gray-900 px-2 py-4 bg-gray-100 rounded-md'>
+        <ul className='w-[300px] text-gray-900 px-2 py-4 mr-4 bg-gray-100 rounded-md fixed'>
             <li className='mb-4 px-2'>
                 <span className='w-full block mb-2 font-bold text-sm text-gray-500'>検索</span>
             <form>   
@@ -73,58 +75,97 @@ const Sidebar = () => {
             </form>
             </li>
             <li className='mb-4 px-2'>
-                <span className='w-full block mb-2 font-bold text-sm text-gray-500'>色を選択</span>
-                <ul>
-                    {
-                        colors.map((colorsData) => (
-                            <li 
-                            key={colorsData.color}
-                            className='h-10 flex items-center justify-between cursor-pointer rounded-lg px-2 hover:bg-blue-200 transition-all'
-                            onClick={() => handleColorsCheck(colorsData)}
-                            >
-                                <p>
-                                    {colorsData.color}
-                                </p>
-                                <span>
-                                    {
-                                        colorsData.isActive ? (
-                                            <svg className="w-4 h-4 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                                            </svg>
-                                        ) : (<></>)
-                                    }
-                                </span>
-                            </li>
-                        ))
-                    }
-                </ul>
+                <div 
+                className='flex items-center cursor-pointer'
+                onClick={() => setDrawerColors(!drawerColors)}
+                >
+                    <span className='w-full block font-bold text-sm text-gray-500'>色を選択</span>
+                    <span>
+                        <svg 
+                        className="w-3 h-3 text-gray-500 dark:text-white transition-all" 
+                        style={drawerColors ? {} : { transform: "rotate(-90deg)" }}
+                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" viewBox="0 0 14 8"
+                        >
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
+                        </svg>
+                    </span>
+                </div>
+                {
+                    drawerColors ? (
+                        <ul>
+                            {
+                                colors.map((colorsData) => (
+                                    <li 
+                                    key={colorsData.color}
+                                    className='h-10 flex items-center justify-between cursor-pointer rounded-lg px-2 hover:bg-blue-200 transition-all'
+                                    onClick={() => handleColorsCheck(colorsData)}
+                                    >
+                                        <p>
+                                            {colorsData.color}
+                                        </p>
+                                        <span>
+                                            {
+                                                colorsData.isActive ? (
+                                                    <svg className="w-4 h-4 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                                    </svg>
+                                                ) : (<></>)
+                                            }
+                                        </span>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    ) : (<></>)
+                }
             </li>
             <li className='mb-4 px-2'>
-                <span className='w-full block mb-2 font-bold text-sm text-gray-500'>特徴を選択</span>
-                <ul>
-                    {
-                        characters.map((charactersData) => (
-                            <li
-                            key={charactersData.character}
-                            className='h-10 flex items-center justify-between cursor-pointer rounded-lg px-2 hover:bg-blue-200 transition-all'
-                            onClick={() => handleCharactersCheck(charactersData)}
-                            >
-                                <p>
-                                    { charactersData.character }
-                                </p>
-                                <span>
-                                    {
-                                        charactersData.isActive ? (
-                                            <svg className="w-4 h-4 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-                                            </svg>
-                                        ) : (<></>)
-                                    }
-                                </span>
-                            </li>
-                        ))
-                    }
-                </ul>
+                <div 
+                className='flex items-center cursor-pointer'
+                onClick={() => setDrawerCharacters(!drawerCharacters)}
+                >
+                    <span className='w-full block font-bold text-sm text-gray-500'>特徴を選択</span>
+                    <span>
+                        <svg 
+                        className="w-3 h-3 text-gray-500 dark:text-white transition-all" 
+                        style={drawerCharacters ? {} : { transform: "rotate(-90deg)" }}
+                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" viewBox="0 0 14 8"
+                        >
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
+                        </svg>
+                    </span>
+                </div>
+
+                {
+                    drawerCharacters ? (
+                        <ul>
+                            {
+                                characters.map((charactersData) => (
+                                    <li
+                                    key={charactersData.character}
+                                    className='h-10 flex items-center justify-between cursor-pointer rounded-lg px-2 hover:bg-blue-200 transition-all'
+                                    onClick={() => handleCharactersCheck(charactersData)}
+                                    >
+                                        <p>
+                                            { charactersData.character }
+                                        </p>
+                                        <span>
+                                            {
+                                                charactersData.isActive ? (
+                                                    <svg className="w-4 h-4 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                                    </svg>
+                                                ) : (<></>)
+                                            }
+                                        </span>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    ) : (<></>)
+                }
             </li>
             { 
                 //仮のボタン 
