@@ -11,6 +11,7 @@ import { killifishColorType, killifishCharacterType } from '@/types/sidebarTypes
 
 const Sidebar = () => {
     const router = useRouter();
+    const [isPost, setIsPost] = useState(false);
 
     //選択欄の状態を管理
     const [colors, setColors] = useState<killifishColorType[]>(killifishColors);
@@ -167,9 +168,14 @@ const Sidebar = () => {
                     ) : (<></>)
                 }
             </li>
-            { 
-                //仮のボタン 
-            }
+            <li className='px-8 mb-2'>
+                <button
+                className='bg-blue-500 text-white w-full py-2 rounded-full hover:bg-blue-600 transition-all'
+                onClick={() => setIsPost(!isPost)}
+                >
+                    投稿する
+                </button>
+            </li>
             <li className='px-8'>
                 <button
                 className='bg-red-200 w-full py-2 rounded-full hover:bg-red-300 transition-all'
@@ -179,6 +185,17 @@ const Sidebar = () => {
                 </button>
             </li>
         </ul>
+        {
+            isPost ? (
+                <div 
+                className='bg-stone-900 opacity-70 w-full h-screen fixed left-0 top-0'
+                onClick={() => setIsPost(!isPost)}
+                >
+                </div>
+            ) : (
+                <></>
+            )
+        }
         </>
     );
 };

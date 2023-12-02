@@ -5,6 +5,9 @@ import { useRouter } from 'next/router';
 import { app } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
+//lib
+import { apiClient } from '@/lib/axios';
+
 const RightComponent = () => {
   const [isCreateAccount, setIsCreateAccount] = useState<boolean>(false);
   const [isLoginAccount, setIsLoginAccount] = useState<boolean>(false);
@@ -42,9 +45,9 @@ const RightComponent = () => {
     const auth = getAuth(app);
 
     createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(async (userCredential) => {
       const user = userCredential.user;
-      console.log(user);
+      await apiClient.post("/user/register", { email: email });
 
       router.push({
         pathname: "/share",

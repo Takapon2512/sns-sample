@@ -9,15 +9,10 @@ import { useAuth } from '@/context/auth';
 
 const Posts = () => {
     const [isLike, setIsLike] = useState<boolean>(false); 
-
     const { user } = useAuth();
 
-    const now = new Date(Date.now());
-    const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
-    console.log(now);
-    console.log(formattedDate);
-
     return (
+        <>
         <ul className='w-full rounded-md pl-[316px]'>
             {
                 postsData.map((post, index) => (
@@ -74,7 +69,7 @@ const Posts = () => {
                                 )
                             }
                             <button
-                            className='py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-all'
+                            className='py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all'
                             >
                                 返信する
                             </button>
@@ -83,6 +78,10 @@ const Posts = () => {
                 ))
             }
         </ul>
+        <div>
+
+        </div>
+        </>
     );
 };
 
