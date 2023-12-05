@@ -5,6 +5,7 @@ import "dotenv/config";
 
 //router
 import { userRouter } from "./routers/user";
+import { postRouter } from "./routers/post";
 
 const app = express();
 const PORT = 8080;
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(cors({ origin: "http://localhost:3000" }));
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/post", postRouter);
 
 //MySQLとの接続確認
 app.get("/mysql", (req, res) => {
