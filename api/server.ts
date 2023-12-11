@@ -1,6 +1,7 @@
 import express from "express";
 import { createPool } from "mysql";
 import cors from "cors";
+import { config } from "aws-sdk";
 import "dotenv/config";
 
 //router
@@ -17,6 +18,13 @@ export const Pool = createPool({
     password: process.env.MYSQL_PASSWORD,
     database: "sns-sample",
     port: 3306
+});
+
+//AWS
+config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: "ap-northeast-1"
 });
 
 app.use(express.json());

@@ -75,18 +75,17 @@ const Sidebar = () => {
     const handlePost = async () => {
         if (title !== "" && description !== "" && selectImage !== null) {
             try {
-                //タイトルや内容などをサーバーへ
-                await apiClient.post("/post/post", ({
-                    title: title,
-                    description: description,
-                    uid: user?.uid
-                }));
-                
                 const formData = new FormData();
-                formData.append('image', selectImage);
-        
-                await apiClientMulti.post("/post/post_image", formData);
 
+                formData.append('image', selectImage);
+                formData.append('title', title);
+                formData.append('description', description);
+                formData.append('email', user?.email ? user.email : "");
+                formData.append('uid', user ? user.uid : "");
+
+                //タイトルや内容などをサーバーへ
+                await apiClientMulti.post("/post/post", formData);
+                
                 setTitle("");
                 setDescription("");
                 setSelectImage(null);

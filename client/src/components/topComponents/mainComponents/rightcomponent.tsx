@@ -3,7 +3,13 @@ import { useRouter } from 'next/router';
 
 //firebase
 import { app } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { 
+  createUserWithEmailAndPassword, 
+  getAuth, 
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth';
 
 //lib
 import { apiClient } from '@/lib/axios';
@@ -66,7 +72,6 @@ const RightComponent = () => {
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
-      console.log(user);
 
       router.push({
         pathname: "/share",
@@ -86,6 +91,25 @@ const RightComponent = () => {
     };
   }, [password]);
 
+  //ログイン処理(Googleアカウント)
+  const googleLogin = () => {
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+
+      router.push({
+        pathname: "/share",
+        query: { user: user.uid }
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  };
+
   return (
     <>
     <div className='w-2/5 bg-blue-400 flex items-center'>
@@ -104,13 +128,14 @@ const RightComponent = () => {
                 アカウントを作成
             </button>
             <button 
-            className='w-2/5 text-white bg-green-700 h-12 rounded-full mb-4 min-w-240 hover:bg-green-600 transition-all'
+            className='w-2/5 h-12 border-solid border border-gray-800 rounded-full mb-4 min-w-240 hover:bg-blue-200 transition-all'
             onClick={() => setIsLoginAccount(true)}
             >
                 ログイン
             </button>
             <button 
             className='w-2/5 min-w-240'
+            onClick={googleLogin}
             >
               <img src="/images/google_SI.png" alt="Googleログイン" />
             </button>
