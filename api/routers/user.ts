@@ -13,11 +13,11 @@ userRouter.post("/register", (req, res) => {
 
     //DBに同じユーザーがいないかを確認
     Pool.getConnection((err, con) => {
-        if (err) return res.status(500).json({ message: "ユーザーの取得ができません。" });
+        if (err) return res.status(500).json({ message: "ユーザー情報の取得ができません。" });
         const sql = `SELECT * FROM User WHERE email = ?`;
 
         con.query(sql, [email], (err: MysqlError | null, users: userType[]) => {
-            if (err) return res.status(500).json({ message: "ユーザーの取得に失敗しました。" });
+            if (err) return res.status(500).json({ message: "ユーザー情報の取得に失敗しました。" });
             if (users.length > 0) {
                 return res.status(500).json({ message: "すでにユーザーが存在します。" });
             };
@@ -28,11 +28,11 @@ userRouter.post("/register", (req, res) => {
 
     //入力されたメールアドレスが退会状態になっているかを確認
     Pool.getConnection((err, con) => {
-        if (err) return res.status(500).json({ message: "退会ユーザーの取得ができません。" });
+        if (err) return res.status(500).json({ message: "退会ユーザー情報の取得ができません。" });
         const sql = `SELECT * FROM User WHERE email = ? AND deleted_at IS NOT NULL`;
 
         con.query(sql, [email], (err: MysqlError | null, users: userType[]) => {
-            if (err) return res.status(500).json({ message: "退会ユーザーの取得に失敗しました。" });
+            if (err) return res.status(500).json({ message: "退会ユーザー情報の取得に失敗しました。" });
             if (users.length > 0) {
                 const deleteSql = `DELETE FROM User WHERE email = ?`;
                 con.query(deleteSql, [email], (err) => {
@@ -47,16 +47,9 @@ userRouter.post("/register", (req, res) => {
     Pool.getConnection((err, con) => {
         if (err) return res.status(500).json({ message: "ユーザー登録ができません。" });
 
-        const now = new Date(Date.now());
-        const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');   
-        
-        const userEmailArr = email.split("");
-        const atIndex = userEmailArr.indexOf("@");
-        const newUserEmailArr = userEmailArr.slice(0, atIndex);
-        const user = newUserEmailArr.join("");
-
         const sql = `INSERT INTO User (username, email, created_at) VALUES (?, ?, ?)`;
-        con.query(sql, [user, email, formattedDate], (err) => {
+        const userData = generateUserInfo(email);
+        con.query(sql, [userData.username, email, userData.formattedDate], (err) => {
             if (err) return res.status(500).json({ message: "ユーザー登録に失敗しました。" });
         });
 
@@ -65,3 +58,43 @@ userRouter.post("/register", (req, res) => {
 
     return res.status(200).json({ message: "ユーザー登録が完了しました。" });
 });
+
+//ユーザーを登録するAPI（Googleアカウント）
+userRouter.post("/register_google", (req, res) => {
+    const email: string = req.body.email;
+    
+    Pool.getConnection((err, con) => {
+        if (err) return res.status(500).json({ message: "ユーザー情報の取得ができません。" });
+
+        const fetchSql = `SELECT * FROM User WHERE email = ?`;
+        con.query(fetchSql, [email], (err, users: userType[]) => {
+            if (err) return res.status(500).json({ message: "ユーザー情報の取得に失敗しました。" });
+
+            if (users.length > 0) {
+                return res.status(200).json({ message: "ユーザーはすでに登録されています。" });
+            } else {
+                const registerSql = `INSERT INTO User (username, email, created_at) VALUES (?, ?, ?)`;
+                const userData = generateUserInfo(email);
+                con.query(registerSql, [userData.username, email, userData.formattedDate], (err) => {
+                    if (err) return res.status(500).json({ message: "ユーザー情報の登録に失敗しました。" });
+                    return res.status(200).json({ message: "ユーザーの登録が完了しました。" });
+                });
+            };
+        });
+
+        con.release();
+    });
+});
+
+//ユーザー登録に必要な情報を生成する処理
+const generateUserInfo = (email: string) => {
+    const now = new Date(Date.now());
+    const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');   
+    
+    const userEmailArr = email.split("");
+    const atIndex = userEmailArr.indexOf("@");
+    const newUserEmailArr = userEmailArr.slice(0, atIndex);
+    const username = newUserEmailArr.join("");
+
+    return {formattedDate: formattedDate, username: username };
+};

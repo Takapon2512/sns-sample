@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth';
+
+//lib
+import { apiClient } from '@/lib/axios';
 
 const Header = () => {
     const { user } = useAuth();
+
+    //ユーザー情報の取得
+    const fetchUser = () => {
+        
+    };
 
     return (
         <header className='h-14 px-4 border-b fixed w-full top-0 z-10 bg-white'>

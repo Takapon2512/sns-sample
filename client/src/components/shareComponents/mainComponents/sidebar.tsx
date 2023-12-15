@@ -85,12 +85,8 @@ const Sidebar = () => {
 
                 //タイトルや内容などをサーバーへ
                 await apiClientMulti.post("/post/post", formData);
-                
-                setTitle("");
-                setDescription("");
-                setSelectImage(null);
-                setIsPost(false);
-                
+
+                router.reload();
             } catch (err) {
                 console.error(err);
             };

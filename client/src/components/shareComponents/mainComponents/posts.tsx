@@ -1,21 +1,38 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 //lib
-import { postsData } from '@/lib/post';
+import { apiClient } from '@/lib/axios';
 
 //auth
 import { useAuth } from '@/context/auth';
+import { postType } from '@/types/postType';
 
 const Posts = () => {
-    const [isLike, setIsLike] = useState<boolean>(false); 
+    const [isLike, setIsLike] = useState<boolean>(false);
+    const [posts, setPosts] = useState<postType[]>([]);
     const { user } = useAuth();
+
+    const fetchPosts = async () => {
+        try {
+            const response = await apiClient.get("/post/fetch_post");
+            const postsData: postType[] = response.data;
+            
+            setPosts(postsData);
+        } catch (err) {
+            console.error(err);
+        };
+    };
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
 
     return (
         <>
         <ul className='w-full rounded-md pl-[316px]'>
             {
-                postsData.map((post, index) => (
+                posts.map((post, index) => (
                     <li 
                     key={`${user?.uid}_${index}`}
                     className='p-6 mb-4 bg-blue-50 rounded-md text-gray-900'
@@ -35,10 +52,15 @@ const Posts = () => {
                         <p className='mb-4'>
                             { post.description }
                         </p>
-                        <div className='mb-2'>
-                            <Link rel="stylesheet" href="/">
+                        <div className='mb-2 w-full'>
+                            <Link 
+                            rel="stylesheet" 
+                            href={post.imageUrl} 
+                            target='_blank'
+                            className='block w-full'
+                            >
                                 <img
-                                className='p-2 rounded-3xl' 
+                                className='p-2 rounded-3xl w-full object-cover aspect-video' 
                                 src={ post.imageUrl } 
                                 alt="メダカの画像" 
                                 />

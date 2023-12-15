@@ -7,6 +7,6 @@ export type postType = {
     imageUrl: string;
     created_at: string;
     deleted_at: string; 
-    goodNum: number;
+    good_users: string;
     uid: string;
 };

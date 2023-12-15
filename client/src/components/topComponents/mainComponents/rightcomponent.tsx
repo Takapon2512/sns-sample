@@ -97,8 +97,11 @@ const RightComponent = () => {
     const provider = new GoogleAuthProvider();
 
     signInWithPopup(auth, provider)
-    .then((result) => {
+    .then(async (result) => {
       const user = result.user;
+      const email = user.email;
+
+      await apiClient.post("/user/register_google", { email: email });
 
       router.push({
         pathname: "/share",
