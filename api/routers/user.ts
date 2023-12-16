@@ -56,7 +56,7 @@ userRouter.post("/register", (req, res) => {
         con.release();
     });
 
-    return res.status(200).json({ message: "ユーザー登録が完了しました。" });
+    return res.status(201).json({ message: "ユーザー登録が完了しました。" });
 });
 
 //ユーザーを登録するAPI（Googleアカウント）
@@ -77,9 +77,27 @@ userRouter.post("/register_google", (req, res) => {
                 const userData = generateUserInfo(email);
                 con.query(registerSql, [userData.username, email, userData.formattedDate], (err) => {
                     if (err) return res.status(500).json({ message: "ユーザー情報の登録に失敗しました。" });
-                    return res.status(200).json({ message: "ユーザーの登録が完了しました。" });
+                    return res.status(201).json({ message: "ユーザーの登録が完了しました。" });
                 });
             };
+        });
+        con.release();
+    });
+});
+
+//ユーザー情報の取得
+userRouter.post("/fetch_user", (req, res) => {
+    const userEmail: string = req.body.email;
+
+    Pool.getConnection((err, con) => {
+        if (err) return res.status(500).json({ message: "ユーザー情報の取得ができません。" });
+
+        const fetchSql = `SELECT * FROM User WHERE email = ?`;
+        con.query(fetchSql, [userEmail], (err: MysqlError | null, users: userType[]) => {
+            if (err) return res.status(500).json({ message: "ユーザー情報の取得に失敗しました。" });
+
+            const user: userType = users[0];
+            return res.status(200).json(user);
         });
 
         con.release();

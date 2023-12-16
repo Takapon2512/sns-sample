@@ -27,8 +27,8 @@ postRouter.post("/post", upload.single('image'), async (req, res) => {
         if (err) return res.status(500).json({ message: "ユーザーの取得ができません" });
 
         const sql = `SELECT * FROM User WHERE email = ?`;
-        con.query(sql, [postData.email || ""], (err: MysqlError | null, users: userType[]) => {
-            if (err) return res.status(500).json({ message: "ユーザーの取得に失敗しました" });
+        con.query(sql, [postData.email], (err: MysqlError | null, users: userType[]) => {
+            if (err || !fileData) return res.status(500).json({ message: "ユーザーの取得に失敗しました" });
             
             const userIcon = users[0].iconUrl;
             const userName = users[0].username;
@@ -36,10 +36,10 @@ postRouter.post("/post", upload.single('image'), async (req, res) => {
             const now = new Date(Date.now());
             const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
 
-            const imageKey: string = `images/${postData.uid}/${Date.now()}_${fileData?.originalname}`;
+            const imageKey: string = `images/${postData.uid}/${Date.now()}_${fileData.originalname}`;
             const imageUrlAWS = `${process.env.AWS_S3_URL}/${imageKey}`;
 
-            const goodUsers = "";
+            const goodUsers = " ";
             
             const postSql = `INSERT INTO Post 
             (
@@ -57,8 +57,10 @@ postRouter.post("/post", upload.single('image'), async (req, res) => {
                 goodUsers, 
                 postData.uid || ""
             ], async (err) => {
-                if (err) return res.status(500).json({ message: "投稿内容の登録に失敗しました" });
-                if (!fileData) return res.status(500).json({ message: "画像がありません。" });
+                if (err) return res.status(500).json({ 
+                    message: "投稿内容の登録に失敗しました",
+                    error: err
+                });
 
                 //画像をS3にアップロードする処理
                 const params = {
@@ -69,10 +71,9 @@ postRouter.post("/post", upload.single('image'), async (req, res) => {
                 };
 
                 await s3.upload(params).promise();
+                return res.status(201).json({ message: "投稿完了" });
             });
-            return res.status(200).json({ message: "投稿完了" });
         });
-        
         con.release();
     });
 });
