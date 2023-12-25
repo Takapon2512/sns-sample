@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Pool } from "../server";
 import { MysqlError } from "mysql";
 
+
 //types
 import { userType } from "../types/userTypes";
 
@@ -10,51 +11,56 @@ export const userRouter = Router();
 //ユーザーを登録する処理を行うAPI
 userRouter.post("/register", (req, res) => {
     const { email }: { email: string } = req.body;
+    console.log(email);
 
-    //DBに同じユーザーがいないかを確認
-    Pool.getConnection((err, con) => {
-        if (err) return res.status(500).json({ message: "ユーザー情報の取得ができません。" });
-        const sql = `SELECT * FROM User WHERE email = ?`;
+    //次回：UUIDを作成する
 
-        con.query(sql, [email], (err: MysqlError | null, users: userType[]) => {
-            if (err) return res.status(500).json({ message: "ユーザー情報の取得に失敗しました。" });
-            if (users.length > 0) {
-                return res.status(500).json({ message: "すでにユーザーが存在します。" });
-            };
-        });
+    // //DBに同じユーザーがいないかを確認
+    // Pool.getConnection((err, con) => {
+    //     if (err) return res.status(500).json({ message: "ユーザー情報の取得ができません。" });
+    //     const sql = `SELECT * FROM User WHERE email = ?`;
 
-        con.release();
-    });
+    //     con.query(sql, [email], (err: MysqlError | null, users: userType[]) => {
+    //         if (err) return res.status(500).json({ message: "ユーザー情報の取得に失敗しました。" });
+    //         if (users.length > 0) {
+    //             return res.status(500).json({ message: "すでにユーザーが存在します。" });
+    //         };
+    //     });
 
-    //入力されたメールアドレスが退会状態になっているかを確認
-    Pool.getConnection((err, con) => {
-        if (err) return res.status(500).json({ message: "退会ユーザー情報の取得ができません。" });
-        const sql = `SELECT * FROM User WHERE email = ? AND deleted_at IS NOT NULL`;
+    //     con.release();
+    // });
 
-        con.query(sql, [email], (err: MysqlError | null, users: userType[]) => {
-            if (err) return res.status(500).json({ message: "退会ユーザー情報の取得に失敗しました。" });
-            if (users.length > 0) {
-                const deleteSql = `DELETE FROM User WHERE email = ?`;
-                con.query(deleteSql, [email], (err) => {
-                    if (err) return res.status(500).json({ message: "ユーザー消去に失敗しました。" });
-                });
-            };
-        });
+    // //入力されたメールアドレスが退会状態になっているかを確認
+    // Pool.getConnection((err, con) => {
+    //     if (err) return res.status(500).json({ message: "退会ユーザー情報の取得ができません。" });
+    //     const sql = `SELECT * FROM User WHERE email = ? AND deleted_at IS NOT NULL`;
 
-        con.release();
-    });
+    //     con.query(sql, [email], (err: MysqlError | null, users: userType[]) => {
+    //         if (err) return res.status(500).json({ message: "退会ユーザー情報の取得に失敗しました。" });
+    //         if (users.length > 0) {
+    //             const deleteSql = `UPDATE User SET deleted_at IS NULL WHERE email = ?`;
+    //             con.query(deleteSql, [email], (err) => {
+    //                 if (err) return res.status(500).json({ message: "ユーザーの復元に成功しました。" });
+    //             });
+    //         };
+    //     });
 
-    Pool.getConnection((err, con) => {
-        if (err) return res.status(500).json({ message: "ユーザー登録ができません。" });
+    //     con.release();
+    // });
 
-        const sql = `INSERT INTO User (username, email, created_at) VALUES (?, ?, ?)`;
-        const userData = generateUserInfo(email);
-        con.query(sql, [userData.username, email, userData.formattedDate], (err) => {
-            if (err) return res.status(500).json({ message: "ユーザー登録に失敗しました。" });
-        });
+    // Pool.getConnection((err, con) => {
+    //     if (err) return res.status(500).json({ message: "ユーザー登録ができません。" });
 
-        con.release();
-    });
+
+
+    //     const sql = `INSERT INTO User (username, email, created_at, uid) VALUES (?, ?, ?, ?)`;
+    //     const userData = generateUserInfo(email);
+    //     con.query(sql, [userData.username, email, userData.formattedDate], (err) => {
+    //         if (err) return res.status(500).json({ message: "ユーザー登録に失敗しました。" });
+    //     });
+
+    //     con.release();
+    // });
 
     return res.status(201).json({ message: "ユーザー登録が完了しました。" });
 });

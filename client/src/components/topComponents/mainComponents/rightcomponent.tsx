@@ -131,7 +131,13 @@ const RightComponent = () => {
                 アカウントを作成
             </button>
             <button 
-            className='w-2/5 h-12 border-solid border border-gray-800 rounded-full mb-4 min-w-240 hover:bg-blue-200 transition-all'
+            className={`
+            w-2/5 h-12 
+            border-solid border border-slate-100 
+            text-white rounded-full mb-4 min-w-240 
+            hover:bg-blue-300 hover:border-blue-300
+            transition-all
+            `}
             onClick={() => setIsLoginAccount(true)}
             >
                 ログイン

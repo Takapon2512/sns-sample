@@ -4,13 +4,27 @@ import { useAuth } from '@/context/auth';
 //lib
 import { apiClient } from '@/lib/axios';
 
+//type
+import { userDBType } from '@/types/userTypes';
+
 const Header = () => {
     const { user } = useAuth();
+    const [iconUrl, setIconUrl] = useState<string>("");
 
-    //ユーザー情報の取得
-    const fetchUser = () => {
-        
+    const fetchUser = async () => {
+        try {
+            const response = await apiClient.post("/user/fetch_user", { email: user?.email });
+            const userData: userDBType = response.data;
+            
+            setIconUrl(userData.iconUrl);
+        } catch (err) {
+            console.error(err);
+        };
     };
+
+    useEffect(() => {
+        if (user) fetchUser();
+    }, [user]);
 
     return (
         <header className='h-14 px-4 border-b fixed w-full top-0 z-10 bg-white'>
@@ -32,8 +46,11 @@ const Header = () => {
                         </button>
                     </div>
                     <div className='text-sm font-bold flex items-center'>
-                        <span className='tracking-wide'>{ user ? user.email : "" }</span>
-                        <span className='bg-red-500 block w-10 h-10 rounded-full ml-4'></span>
+                        <span className='tracking-wide mr-4'>{ user ? user.email : "" }</span>
+                        <img 
+                        className='rounded-full w-12 h-12'
+                        src={iconUrl} 
+                        />
                     </div>
                 </div>
             </div>
